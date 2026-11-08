@@ -11,48 +11,90 @@ var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/service
     attribution: 'Tiles © Esri'
 });
 
-function getReservoirName(lat) {
-    return (lat > 6.845) ? "Kalatuwawa Reservoir" : "Labugama Reservoir";
+// Reservoir Area Metrics Reference Data
+var metrics = {
+    "Kalatuwawa": { area2019: "1.33 km²", area2026: "0.98 km²", change: "-0.35 km² (-26.15%)" },
+    "Labugama": { area2019: "0.66 km²", area2026: "0.61 km²", change: "-0.05 km² (-7.60%)" }
+};
+
+function getReservoirInfo(lat) {
+    return (lat > 6.845) ? { name: "Kalatuwawa Reservoir", data: metrics["Kalatuwawa"] } 
+                         : { name: "Labugama Reservoir", data: metrics["Labugama"] };
 }
 
-// 3. Render 2019 Layer
+// 3. Render 2019 Layer (Orange)
 var layer2019 = L.geoJSON(data2019, {
-    style: { color: '#d35400', fillColor: '#e67e22', fillOpacity: 0.6, weight: 2 },
+    style: { color: '#d35400', fillColor: '#e67e22', fillOpacity: 0.65, weight: 2 },
     onEachFeature: function (feature, layer) {
         var bounds = layer.getBounds();
         var center = bounds.getCenter();
-        var name = getReservoirName(center.lat);
-        layer.bindTooltip(name + " (2019)", { permanent: false, direction: 'top' });
-        layer.bindPopup("<h3>" + name + "</h3><p><b>Analysis Year:</b> 2019</p><p><b>Data Source:</b> Landsat NDWI</p>");
+        var res = getReservoirInfo(center.lat);
+
+        layer.bindTooltip(res.name + " (2019)", { permanent: false, direction: 'top' });
+        layer.bindPopup(
+            "<h3>" + res.name + " (2019)</h3>" +
+            "<p><b>Baseline Water Extent:</b> " + res.data.area2019 + "</p>" +
+            "<p><b>Data Source:</b> Landsat NDWI</p>"
+        );
     }
 }).addTo(map);
 
-// 4. Render 2026 Layer
+// 4. Render 2026 Layer (Blue)
 var layer2026 = L.geoJSON(data2026, {
     style: { color: '#1b4f72', fillColor: '#3498db', fillOpacity: 0.75, weight: 2 },
     onEachFeature: function (feature, layer) {
         var bounds = layer.getBounds();
         var center = bounds.getCenter();
-        var name = getReservoirName(center.lat);
-        layer.bindTooltip(name + " (2026)", { permanent: false, direction: 'top' });
-        layer.bindPopup("<h3>" + name + "</h3><p><b>Analysis Year:</b> 2026</p><p><b>Data Source:</b> Landsat NDWI</p>");
+        var res = getReservoirInfo(center.lat);
+
+        layer.bindTooltip(res.name + " (2026)", { permanent: false, direction: 'top' });
+        layer.bindPopup(
+            "<h3>" + res.name + " (2026)</h3>" +
+            "<p><b>2026 Water Extent:</b> " + res.data.area2026 + "</p>" +
+            "<p><b>2019 Water Extent:</b> " + res.data.area2019 + "</p>" +
+            "<p><b>Net Area Change:</b> <span class='badge-dec'>" + res.data.change + "</span></p>" +
+            "<p><b>Data Source:</b> Landsat NDWI</p>"
+        );
     }
 }).addTo(map);
 
-// 5. Fit Bounds
 if (layer2026.getBounds().isValid()) {
     map.fitBounds(layer2026.getBounds());
 }
 
-// 6. Add Scale Control
+// 5. Scale Control
 L.control.scale({ imperial: false, metric: true, position: 'bottomleft' }).addTo(map);
 
-// 7. Layer Switcher
+// 6. Layer Control
 var baseMaps = { "Esri Topo Map": osm, "Satellite Imagery": satellite };
 var overlayMaps = { "Water Extent 2019": layer2019, "Water Extent 2026": layer2026 };
 L.control.layers(baseMaps, overlayMaps, { collapsed: false, position: 'topright' }).addTo(map);
 
-// 8. Legend
+// 7. Quick Zoom Control Buttons
+var zoomControl = L.control({ position: 'topleft' });
+zoomControl.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'zoom-bar');
+    div.innerHTML = '<button class="zoom-btn" onclick="map.flyTo([6.852, 80.19], 14)">🔍 Kalatuwawa</button>' +
+                    '<button class="zoom-btn" onclick="map.flyTo([6.837, 80.178], 14)">🔍 Labugama</button>';
+    return div;
+};
+zoomControl.addTo(map);
+
+// 8. Opacity Control Slider
+var opacityControl = L.control({ position: 'topright' });
+opacityControl.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'opacity-box');
+    div.innerHTML = '<div>2026 Layer Opacity</div>' +
+                    '<input type="range" id="opacitySlider" min="0" max="1" step="0.1" value="0.75" oninput="changeOpacity(this.value)">';
+    return div;
+};
+opacityControl.addTo(map);
+
+function changeOpacity(val) {
+    layer2026.setStyle({ fillOpacity: val });
+}
+
+// 9. Legend
 var legend = L.control({ position: 'bottomright' });
 legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'legend');
