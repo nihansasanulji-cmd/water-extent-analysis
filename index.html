@@ -132,7 +132,7 @@
 
         /* Credits strip (bottom-left, clear of Leaflet attribution on the right) */
         .credits {
-            position: fixed; left: 8px; bottom: 8px; z-index: 900;
+            position: fixed; left: 50%; transform: translateX(-50%); bottom: 8px; z-index: 900; white-space: nowrap;
             background: rgba(255,255,255,0.85); color: #444;
             font-size: 10px; padding: 3px 8px; border-radius: 4px;
             max-width: 55vw;
@@ -188,15 +188,12 @@
             <p><b>Data Source:</b> Landsat multi-spectral imagery (2019 &amp; 2026), courtesy of NASA/USGS</p>
             <p><b>Methodology:</b> NDWI (Normalized Difference Water Index) extraction → polygon delineation → PAEK surface smoothing → Web GIS integration.</p>
 
-            <!-- TODO: fill in your real figures, then remove this comment wrapper
             <h4>Water Area Change</h4>
             <table>
-                <tr><th>Reservoir</th><th>2019 (ha)</th><th>2026 (ha)</th><th>Change (%)</th></tr>
-                <tr><td>Labugama</td><td>XX</td><td>XX</td><td>XX</td></tr>
-                <tr><td>Kalatuwawa</td><td>XX</td><td>XX</td><td>XX</td></tr>
+                <tr><th>Reservoir</th><th>2019</th><th>2026</th><th>Change</th></tr>
+                <tr><td>Kalatuwawa</td><td>1.33 km²</td><td>0.98 km²</td><td>-0.35 km² (-26.17%)</td></tr>
+                <tr><td>Labugama</td><td>0.66 km²</td><td>0.62 km²</td><td>-0.04 km² (-6.60%)</td></tr>
             </table>
-            <p style="font-size:11px;">Image dates: XX (2019), XX (2026). Areas calculated in a projected CRS.</p>
-            -->
 
             <h4>Credits</h4>
             <p>Landsat imagery: NASA/USGS. Basemap: see map attribution. Web map built with Leaflet. Analysis performed in ArcGIS Pro.</p>
