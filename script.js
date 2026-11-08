@@ -11,10 +11,10 @@ var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/service
     attribution: 'Tiles © Esri'
 });
 
-// Reservoir Area Metrics Reference Data
+// Accurate Reservoir Area Metrics Reference Data (Updated 2026)
 var metrics = {
-    "Kalatuwawa": { area2019: "1.33 km²", area2026: "0.98 km²", change: "-0.35 km² (-26.15%)" },
-    "Labugama": { area2019: "0.66 km²", area2026: "0.61 km²", change: "-0.05 km² (-7.60%)" }
+    "Kalatuwawa": { area2019: "1.33 km²", area2026: "0.98 km²", change: "-0.35 km² (-26.17%)" },
+    "Labugama": { area2019: "0.66 km²", area2026: "0.62 km²", change: "-0.04 km² (-6.60%)" }
 };
 
 function getReservoirInfo(lat) {
@@ -80,7 +80,7 @@ zoomControl.onAdd = function (map) {
 };
 zoomControl.addTo(map);
 
-// 8. Opacity Control Slider
+// 8. Dynamic Opacity Control Slider
 var opacityControl = L.control({ position: 'topright' });
 opacityControl.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'opacity-box');
