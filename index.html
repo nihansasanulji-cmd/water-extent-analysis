@@ -104,7 +104,7 @@
         .leaflet-popup-content p { margin: 3px 0; font-size: 11px; color: #444; }
         .badge-dec { color: #c0392b; font-weight: bold; }
 
-        /* Project Info Modal */
+        /* Project Info Modal (Scrollable for full content) */
         .modal {
             display: none;
             position: fixed;
@@ -115,15 +115,59 @@
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 6% auto;
+            margin: 3% auto;
             padding: 20px 25px;
             border-radius: 10px;
-            width: 85%;
-            max-width: 520px;
+            width: 90%;
+            max-width: 580px;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            color: #333;
+            line-height: 1.5;
         }
         .close { color: #aaa; float: right; font-size: 24px; font-weight: bold; cursor: pointer; }
         .close:hover { color: black; }
+
+        /* Modal Typography & Table Styling */
+        .modal-content h3 { color: #1e3c72; margin-top: 0; margin-bottom: 12px; font-size: 18px; }
+        .modal-content h4 { color: #1e3c72; margin-top: 16px; margin-bottom: 6px; font-size: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+        .modal-content p { font-size: 12px; margin: 6px 0; color: #4a5568; }
+        .modal-content ul { font-size: 12px; margin: 6px 0 12px 18px; padding: 0; color: #4a5568; }
+        .modal-content li { margin-bottom: 4px; }
+
+        /* Water Area Change Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #e2e8f0;
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .data-table th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: 600;
+        }
+        .data-table tr:nth-child(even) { background-color: #f8fafc; }
+
+        .explore-btn {
+            background-color: #1e3c72;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .explore-btn:hover { background-color: #2a5298; }
     </style>
 </head>
 <body>
@@ -138,27 +182,65 @@
 
     <div id="map"></div>
 
-    <!-- Project Info Modal Window -->
+    <!-- Project Info Modal Window (Original Content Restored) -->
     <div id="infoModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <h3 style="color:#1e3c72; margin-top:0;">Project Overview & Geospatial Solution</h3>
             
-            <p><b>Study Area:</b> Labugama & Kalatuwawa Reservoirs, Sri Lanka</p>
-            <p><b>Data Source:</b> Landsat Multi-Spectral Imagery (2019 & 2026)</p>
-            <p><b>Methodology:</b> NDWI Extraction $\rightarrow$ Thresholding $\rightarrow$ PAEK Surface Smoothing $\rightarrow$ Pairwise Dissolve $\rightarrow$ Web GIS Integration.</p>
-            
-            <hr style="border: 0.5px solid #eee; margin: 10px 0;">
-            
-            <h4 style="color:#c0392b; margin: 5px 0;">⚠️ Identified Real-World Problem</h4>
-            <p style="font-size: 11px; margin-top: 3px; line-height: 1.4; color:#333;">
-                Multi-temporal surface water analysis (2019–2026) reveals noticeable surface water extent shrinkage (Kalatuwawa: -26.17%, Labugama: -6.60%), posing potential risks to the drinking water supply security of the Colombo Metropolitan Region.
-            </p>
+            <h3>About the Project</h3>
 
-            <h4 style="color:#27ae60; margin: 5px 0;">💡 Proposed Geospatial Solution</h4>
-            <p style="font-size: 11px; margin-top: 3px; line-height: 1.4; color:#333;">
-                An interactive Web GIS Decision-Support Application enabling water resource authorities (such as NWSDB) to continuously monitor reservoir dynamics, supporting proactive drought risk mitigation, catchment protection, and strategic water allocation.
-            </p>
+            <h4>The Problem</h4>
+            <p>Labugama and Kalatuwawa are reservoirs that feed water supply for the Colombo region. Changes in their surface water extent affect supply security, yet they are rarely tracked in a simple, visual and repeatable way.</p>
+
+            <h4>Our Geospatial Approach</h4>
+            <p>Landsat imagery from 2019 and 2026 is converted to NDWI to separate water from land, the water is delineated as polygons, and the two years are compared on this web map.</p>
+
+            <h4>Potential Benefit</h4>
+            <ul>
+                <li>Gives water managers a low-cost way to monitor reservoir shrinkage or expansion.</li>
+                <li>Supports early planning for drought and supply risk.</li>
+                <li>The same workflow can be repeated for other reservoirs and years.</li>
+            </ul>
+
+            <h4>How to Use the Map</h4>
+            <p>Toggle the 2019 and 2026 layers, adjust opacity to compare them, use the quick-zoom buttons for each reservoir, and click a water body for its details.</p>
+
+            <h4>Study Area & Data</h4>
+            <p><b>Study Area:</b> Labugama & Kalatuwawa Reservoirs, Western Province, Sri Lanka</p>
+            <p><b>Data Source:</b> Landsat multi-spectral imagery (2019 & 2026), courtesy of NASA/USGS</p>
+            <p><b>Methodology:</b> NDWI (Normalized Difference Water Index) extraction $\rightarrow$ polygon delineation $\rightarrow$ PAEK surface smoothing $\rightarrow$ Web GIS integration.</p>
+
+            <h4>Water Area Change</h4>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Reservoir</th>
+                        <th>2019</th>
+                        <th>2026</th>
+                        <th>Change</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Kalatuwawa</td>
+                        <td>1.33 km²</td>
+                        <td>0.98 km²</td>
+                        <td>-0.35 km² (-26.17%)</td>
+                    </tr>
+                    <tr>
+                        <td>Labugama</td>
+                        <td>0.66 km²</td>
+                        <td>0.62 km²</td>
+                        <td>-0.04 km² (-6.60%)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Credits</h4>
+            <p><b>Landsat imagery:</b> NASA/USGS. <b>Basemap:</b> see map attribution. Web map built with Leaflet. Analysis performed in ArcGIS Pro.</p>
+            <p><b>Developer:</b> Geo-Spatial Technology Undergraduate Project (SPATIALX 2026)</p>
+
+            <button class="explore-btn" onclick="closeModal()">Explore the map</button>
         </div>
     </div>
 
