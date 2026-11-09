@@ -11,7 +11,7 @@ var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/service
     attribution: 'Tiles © Esri'
 });
 
-// Accurate Reservoir Area Metrics Reference Data (Updated 2026)
+// Accurate Reservoir Area Metrics Reference Data (Verified 2026)
 var metrics = {
     "Kalatuwawa": { area2019: "1.33 km²", area2026: "0.98 km²", change: "-0.35 km² (-26.17%)" },
     "Labugama": { area2019: "0.66 km²", area2026: "0.62 km²", change: "-0.04 km² (-6.60%)" }
@@ -62,7 +62,7 @@ if (layer2026.getBounds().isValid()) {
     map.fitBounds(layer2026.getBounds());
 }
 
-// 5. Scale Control
+// 5. Scale Control (Metric Scale Bar)
 L.control.scale({ imperial: false, metric: true, position: 'bottomleft' }).addTo(map);
 
 // 6. Layer Control
@@ -104,3 +104,12 @@ legend.onAdd = function (map) {
     return div;
 };
 legend.addTo(map);
+
+// 10. Custom North Arrow Control
+var northArrow = L.control({ position: 'bottomleft' });
+northArrow.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'north-arrow');
+    div.innerHTML = '<div style="font-size: 20px; font-weight: bold; color: #1e3c72; line-height: 1;">⬆ N</div>';
+    return div;
+};
+northArrow.addTo(map);
