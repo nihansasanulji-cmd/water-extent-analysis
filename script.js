@@ -62,15 +62,24 @@ if (layer2026.getBounds().isValid()) {
     map.fitBounds(layer2026.getBounds());
 }
 
-// 5. Scale Control (Metric Scale Bar)
+// 5. Scale Control (Bottom Left)
 L.control.scale({ imperial: false, metric: true, position: 'bottomleft' }).addTo(map);
 
-// 6. Layer Control
+// 6. North Arrow Control (Top Right - Topmost position)
+var northArrow = L.control({ position: 'topright' });
+northArrow.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'north-arrow');
+    div.innerHTML = '<div style="font-size: 18px; font-weight: bold; color: #1e3c72; line-height: 1;">⬆ N</div>';
+    return div;
+};
+northArrow.addTo(map);
+
+// 7. Layer Control (Top Right - Under North Arrow)
 var baseMaps = { "Esri Topo Map": osm, "Satellite Imagery": satellite };
 var overlayMaps = { "Water Extent 2019": layer2019, "Water Extent 2026": layer2026 };
 L.control.layers(baseMaps, overlayMaps, { collapsed: false, position: 'topright' }).addTo(map);
 
-// 7. Quick Zoom Control Buttons
+// 8. Quick Zoom Control Buttons (Top Left)
 var zoomControl = L.control({ position: 'topleft' });
 zoomControl.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'zoom-bar');
@@ -80,7 +89,7 @@ zoomControl.onAdd = function (map) {
 };
 zoomControl.addTo(map);
 
-// 8. Dynamic Opacity Control Slider
+// 9. Dynamic Opacity Control Slider (Top Right - Below Layer Control)
 var opacityControl = L.control({ position: 'topright' });
 opacityControl.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'opacity-box');
@@ -94,7 +103,7 @@ function changeOpacity(val) {
     layer2026.setStyle({ fillOpacity: val });
 }
 
-// 9. Legend
+// 10. Map Legend (Bottom Right)
 var legend = L.control({ position: 'bottomright' });
 legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'legend');
@@ -104,12 +113,3 @@ legend.onAdd = function (map) {
     return div;
 };
 legend.addTo(map);
-
-// 10. Custom North Arrow Control
-var northArrow = L.control({ position: 'bottomleft' });
-northArrow.onAdd = function (map) {
-    var div = L.DomUtil.create('div', 'north-arrow');
-    div.innerHTML = '<div style="font-size: 20px; font-weight: bold; color: #1e3c72; line-height: 1;">⬆ N</div>';
-    return div;
-};
-northArrow.addTo(map);
