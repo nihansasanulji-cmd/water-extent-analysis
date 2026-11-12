@@ -104,7 +104,7 @@
         .leaflet-popup-content p { margin: 3px 0; font-size: 11px; color: #444; }
         .badge-dec { color: #c0392b; font-weight: bold; }
 
-        /* Project Info Modal */
+        /* Project Info Modal (Scrollable) */
         .modal {
             display: none;
             position: fixed;
@@ -157,12 +157,13 @@
         .data-table tr:nth-child(even) { background-color: #f8fafc; }
 
         .highlight-box {
-            background-color: #ebf8ff;
-            border-left: 4px solid #3182ce;
+            background-color: #f0f4f8;
+            border-left: 3px solid #1e3c72;
             padding: 8px 12px;
             margin: 8px 0;
+            border-radius: 0 4px 4px 0;
             font-size: 12px;
-            color: #2c5282;
+            color: #2d3748;
         }
 
         .explore-btn {
@@ -186,7 +187,7 @@
             <h2>Multitemporal Water Extent Analysis (2019 - 2026)</h2>
             <p>Labugama & Kalatuwawa Reservoirs | Geo-Spatial Technology Project</p>
         </div>
-        <button class="info-btn" onclick="openModal()">ℹ️ Project Info & Results</button>
+        <button class="info-btn" onclick="openModal()">ℹ️ Project Info</button>
     </div>
 
     <div id="map"></div>
@@ -199,31 +200,30 @@
             <h3>About the Project</h3>
 
             <h4>1. The Problem</h4>
-            <p>Labugama and Kalatuwawa are major drinking water reservoirs supplying the Colombo Metropolitan Region. Changes in their surface water extent directly affect water supply security, yet they are rarely tracked in a simple, visual, and repeatable way.</p>
+            <p>Labugama and Kalatuwawa are reservoirs that feed water supply for the Colombo region. Changes in their surface water extent affect supply security, yet they are rarely tracked in a simple, visual, and repeatable way.</p>
 
-            <h4>2. Study Area & Data Sources</h4>
-            <ul>
-                <li><b>Study Area:</b> Labugama & Kalatuwawa Reservoirs, Western Province, Sri Lanka.</li>
-                <li><b>Satellite Data:</b> Cloud-free Landsat 8/9 OLI multi-spectral imagery (2019 & 2026), courtesy of NASA/USGS.</li>
-                <li><b>Coordinate Reference System (CRS):</b> WGS 1984 UTM Zone 44N (used for accurate planar area computation).</li>
-            </ul>
+            <h4>2. Study Area & Data</h4>
+            <p><b>Study Area:</b> Labugama & Kalatuwawa Reservoirs, Western Province, Sri Lanka</p>
+            <p><b>Data Source:</b> Cloud-free Landsat 8/9 OLI multi-spectral imagery (2019 & 2026), courtesy of NASA/USGS.</p>
+            <p><b>Coordinate Reference System (CRS):</b> WGS 1984 UTM Zone 44N (used for accurate metric area calculations).</p>
 
-            <h4>3. Geospatial Methodology</h4>
+            <h4>3. Methodology</h4>
             <ol>
-                <li><b>NDWI Calculation:</b> Derived surface water index in ArcGIS Pro using Green (Band 3) and NIR (Band 5): <b>NDWI = (Green - NIR) / (Green + NIR)</b>.</li>
-                <li><b>Delineation & Vectorization:</b> Isolated positive NDWI water pixels via thresholding and converted raster extents into vector polygons.</li>
-                <li><b>Geometry Refinement:</b> Applied <b>PAEK (Polynomial Approximation with Exponential Kernel)</b> polygon smoothing and <b>Pairwise Dissolve</b> to create clean reservoir boundaries.</li>
-                <li><b>Area Computation & Web GIS:</b> Computed surface areas (km²) and published interactive GeoJSON layers via Leaflet.js.</li>
+                <li><b>Image Acquisition & Preprocessing:</b> Selected low-cloud-cover Landsat scenes for 2019 and 2026.</li>
+                <li><b>NDWI Spectral Calculation:</b> Computed Normalized Difference Water Index using Band 3 (Green) and Band 5 (NIR): <b>NDWI = (Green - NIR) / (Green + NIR)</b>.</li>
+                <li><b>Thresholding & Delineation:</b> Isolated open water surfaces from surrounding land and converted rasters into vector polygons.</li>
+                <li><b>Smoothing & Dissolve:</b> Applied PAEK (Polynomial Approximation with Exponential Kernel) smoothing and Pairwise Dissolve in ArcGIS Pro to refine reservoir boundaries.</li>
+                <li><b>Spatial Comparison & Web GIS:</b> Calculated exact surface areas (km²) and published layers via Leaflet.js.</li>
             </ol>
 
-            <h4>4. Results & Water Area Change</h4>
+            <h4>4. Water Area Change & Results Interpretation</h4>
             <table class="data-table">
                 <thead>
                     <tr>
                         <th>Reservoir</th>
                         <th>2019 Area</th>
                         <th>2026 Area</th>
-                        <th>Net Area Change</th>
+                        <th>Net Change</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -231,36 +231,39 @@
                         <td>Kalatuwawa</td>
                         <td>1.33 km²</td>
                         <td>0.98 km²</td>
-                        <td><b>-0.35 km² (-26.17%)</b></td>
+                        <td>-0.35 km² (-26.17%)</td>
                     </tr>
                     <tr>
                         <td>Labugama</td>
                         <td>0.66 km²</td>
                         <td>0.62 km²</td>
-                        <td><b>-0.04 km² (-6.60%)</b></td>
+                        <td>-0.04 km² (-6.60%)</td>
                     </tr>
                 </tbody>
             </table>
-            <p style="font-size: 10px; color: #718096; margin-top: 2px;">*Note: Percentage changes are computed from exact unrounded vector geometry values in ArcGIS Pro.</p>
+            <p style="font-size:10px; color:#666; margin-bottom: 8px;">*Note: Percentage reductions are calculated directly from unrounded raw vector geometry measurements in ArcGIS Pro.</p>
 
             <div class="highlight-box">
-                <b>Results Interpretation & Conclusion:</b> Both reservoirs experienced surface water shrinkage between 2019 and 2026. Kalatuwawa recorded a significantly higher reduction (-26.17%) compared to Labugama (-6.60%), which is better buffered by dense surrounding forest reserve cover. This highlights the urgent need for continuous satellite-based reservoir monitoring and proactive water management.
+                <b>Results Interpretation:</b> Both reservoirs experienced surface water shrinkage between 2019 and 2026. Kalatuwawa showed a significantly higher reduction (-26.17%) compared to Labugama (-6.60%), likely due to differences in basin morphometry and surrounding dense forest buffer protection at Labugama.
             </div>
 
-            <h4>5. Limitations & Practical Solutions</h4>
+            <h4>5. Limitations & Future Solutions</h4>
             <ul>
-                <li><b>Limitations:</b> 30m Landsat spatial resolution constraints, seasonal water-level fluctuations, and comparison across two discrete time periods.</li>
-                <li><b>Proposed Solutions:</b> Provides water authorities (NWSDB) with a low-cost, repeatable decision-support dashboard for early drought risk planning, water allocation strategies, and catchment conservation.</li>
+                <li><b>Limitations:</b> 30m spatial resolution limits detection of narrow shoreline changes; seasonal rainfall variations between acquisition dates can influence water levels.</li>
+                <li><b>Solutions & Impact:</b> Provides water managers (NWSDB) a low-cost, repeatable decision-support workflow for early drought planning, catchment protection, and multi-year monitoring.</li>
             </ul>
 
-            <h4>6. How to Use the Map</h4>
-            <p>Toggle the 2019 and 2026 layers, adjust the opacity slider to compare extents, use the quick-zoom buttons for each reservoir, and click directly on any reservoir polygon to view detailed statistics.</p>
+            <h4>6. Conclusion</h4>
+            <p>Integrating Landsat NDWI remote sensing with interactive Web GIS effectively reveals multi-temporal reservoir depletion patterns, offering an accessible tool for sustainable urban water resource management.</p>
 
-            <h4>7. Credits & AI Declaration</h4>
-            <p><b>Data & Tools:</b> Landsat Imagery (NASA/USGS), Basemaps (Esri), GIS Analysis (ArcGIS Pro), Web Mapping (Leaflet.js).</p>
-            <p><b>Originality & AI Disclosure:</b> All remote sensing workflows, NDWI derivations, and spatial area analyses were performed independently in ArcGIS Pro. AI (Gemini) was utilized strictly as a coding assistant for HTML/CSS/JS web interface structuring.</p>
+            <h4>How to Use the Map</h4>
+            <p>Toggle the 2019 and 2026 layers, adjust the opacity slider to compare boundaries, use the quick-zoom buttons, and click any water polygon for detailed metrics.</p>
 
-            <button class="explore-btn" onclick="closeModal()">Explore the Map</button>
+            <h4>Credits & AI Usage Disclosure</h4>
+            <p><b>Data & Software:</b> Landsat imagery courtesy of NASA/USGS. Basemaps © Esri. Spatial analysis performed independently in ArcGIS Pro; web interface built with Leaflet.js (AI assisted with frontend web code formatting).</p>
+            <p><b>Developer:</b> Geo-Spatial Technology Undergraduate Project (SPATIALX 2026)</p>
+
+            <button class="explore-btn" onclick="closeModal()">Explore the map</button>
         </div>
     </div>
 
