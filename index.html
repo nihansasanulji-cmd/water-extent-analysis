@@ -104,7 +104,7 @@
         .leaflet-popup-content p { margin: 3px 0; font-size: 11px; color: #444; }
         .badge-dec { color: #c0392b; font-weight: bold; }
 
-        /* Project Info Modal (Scrollable for full content) */
+        /* Project Info Modal */
         .modal {
             display: none;
             position: fixed;
@@ -119,7 +119,7 @@
             padding: 20px 25px;
             border-radius: 10px;
             width: 90%;
-            max-width: 580px;
+            max-width: 600px;
             max-height: 85vh;
             overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
@@ -133,7 +133,7 @@
         .modal-content h3 { color: #1e3c72; margin-top: 0; margin-bottom: 12px; font-size: 18px; }
         .modal-content h4 { color: #1e3c72; margin-top: 16px; margin-bottom: 6px; font-size: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
         .modal-content p { font-size: 12px; margin: 6px 0; color: #4a5568; }
-        .modal-content ul { font-size: 12px; margin: 6px 0 12px 18px; padding: 0; color: #4a5568; }
+        .modal-content ul, .modal-content ol { font-size: 12px; margin: 6px 0 12px 18px; padding: 0; color: #4a5568; }
         .modal-content li { margin-bottom: 4px; }
 
         /* Water Area Change Table */
@@ -141,7 +141,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
             font-size: 12px;
         }
         .data-table th, .data-table td {
@@ -156,6 +156,15 @@
         }
         .data-table tr:nth-child(even) { background-color: #f8fafc; }
 
+        .highlight-box {
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 8px 12px;
+            margin: 8px 0;
+            font-size: 12px;
+            color: #2c5282;
+        }
+
         .explore-btn {
             background-color: #1e3c72;
             color: white;
@@ -165,7 +174,7 @@
             font-weight: 600;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 12px;
         }
         .explore-btn:hover { background-color: #2a5298; }
     </style>
@@ -177,47 +186,44 @@
             <h2>Multitemporal Water Extent Analysis (2019 - 2026)</h2>
             <p>Labugama & Kalatuwawa Reservoirs | Geo-Spatial Technology Project</p>
         </div>
-        <button class="info-btn" onclick="openModal()">ℹ️ Project Info</button>
+        <button class="info-btn" onclick="openModal()">ℹ️ Project Info & Results</button>
     </div>
 
     <div id="map"></div>
 
-    <!-- Project Info Modal Window (Original Content Restored) -->
+    <!-- Project Info Modal Window -->
     <div id="infoModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             
             <h3>About the Project</h3>
 
-            <h4>The Problem</h4>
-            <p>Labugama and Kalatuwawa are reservoirs that feed water supply for the Colombo region. Changes in their surface water extent affect supply security, yet they are rarely tracked in a simple, visual and repeatable way.</p>
+            <h4>1. The Problem</h4>
+            <p>Labugama and Kalatuwawa are major drinking water reservoirs supplying the Colombo Metropolitan Region. Changes in their surface water extent directly affect water supply security, yet they are rarely tracked in a simple, visual, and repeatable way.</p>
 
-            <h4>Our Geospatial Approach</h4>
-            <p>Landsat imagery from 2019 and 2026 is converted to NDWI to separate water from land, the water is delineated as polygons, and the two years are compared on this web map.</p>
-
-            <h4>Potential Benefit</h4>
+            <h4>2. Study Area & Data Sources</h4>
             <ul>
-                <li>Gives water managers a low-cost way to monitor reservoir shrinkage or expansion.</li>
-                <li>Supports early planning for drought and supply risk.</li>
-                <li>The same workflow can be repeated for other reservoirs and years.</li>
+                <li><b>Study Area:</b> Labugama & Kalatuwawa Reservoirs, Western Province, Sri Lanka.</li>
+                <li><b>Satellite Data:</b> Cloud-free Landsat 8/9 OLI multi-spectral imagery (2019 & 2026), courtesy of NASA/USGS.</li>
+                <li><b>Coordinate Reference System (CRS):</b> WGS 1984 UTM Zone 44N (used for accurate planar area computation).</li>
             </ul>
 
-            <h4>How to Use the Map</h4>
-            <p>Toggle the 2019 and 2026 layers, adjust opacity to compare them, use the quick-zoom buttons for each reservoir, and click a water body for its details.</p>
+            <h4>3. Geospatial Methodology</h4>
+            <ol>
+                <li><b>NDWI Calculation:</b> Derived surface water index in ArcGIS Pro using Green (Band 3) and NIR (Band 5): <b>NDWI = (Green - NIR) / (Green + NIR)</b>.</li>
+                <li><b>Delineation & Vectorization:</b> Isolated positive NDWI water pixels via thresholding and converted raster extents into vector polygons.</li>
+                <li><b>Geometry Refinement:</b> Applied <b>PAEK (Polynomial Approximation with Exponential Kernel)</b> polygon smoothing and <b>Pairwise Dissolve</b> to create clean reservoir boundaries.</li>
+                <li><b>Area Computation & Web GIS:</b> Computed surface areas (km²) and published interactive GeoJSON layers via Leaflet.js.</li>
+            </ol>
 
-            <h4>Study Area & Data</h4>
-            <p><b>Study Area:</b> Labugama & Kalatuwawa Reservoirs, Western Province, Sri Lanka</p>
-            <p><b>Data Source:</b> Landsat multi-spectral imagery (2019 & 2026), courtesy of NASA/USGS</p>
-            <p><b>Methodology:</b> NDWI (Normalized Difference Water Index) extraction $\rightarrow$ polygon delineation $\rightarrow$ PAEK surface smoothing $\rightarrow$ Web GIS integration.</p>
-
-            <h4>Water Area Change</h4>
+            <h4>4. Results & Water Area Change</h4>
             <table class="data-table">
                 <thead>
                     <tr>
                         <th>Reservoir</th>
-                        <th>2019</th>
-                        <th>2026</th>
-                        <th>Change</th>
+                        <th>2019 Area</th>
+                        <th>2026 Area</th>
+                        <th>Net Area Change</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -225,22 +231,36 @@
                         <td>Kalatuwawa</td>
                         <td>1.33 km²</td>
                         <td>0.98 km²</td>
-                        <td>-0.35 km² (-26.17%)</td>
+                        <td><b>-0.35 km² (-26.17%)</b></td>
                     </tr>
                     <tr>
                         <td>Labugama</td>
                         <td>0.66 km²</td>
                         <td>0.62 km²</td>
-                        <td>-0.04 km² (-6.60%)</td>
+                        <td><b>-0.04 km² (-6.60%)</b></td>
                     </tr>
                 </tbody>
             </table>
+            <p style="font-size: 10px; color: #718096; margin-top: 2px;">*Note: Percentage changes are computed from exact unrounded vector geometry values in ArcGIS Pro.</p>
 
-            <h4>Credits</h4>
-            <p><b>Landsat imagery:</b> NASA/USGS. <b>Basemap:</b> see map attribution. Web map built with Leaflet. Analysis performed in ArcGIS Pro.</p>
-            <p><b>Developer:</b> Geo-Spatial Technology Undergraduate Project (SPATIALX 2026)</p>
+            <div class="highlight-box">
+                <b>Results Interpretation & Conclusion:</b> Both reservoirs experienced surface water shrinkage between 2019 and 2026. Kalatuwawa recorded a significantly higher reduction (-26.17%) compared to Labugama (-6.60%), which is better buffered by dense surrounding forest reserve cover. This highlights the urgent need for continuous satellite-based reservoir monitoring and proactive water management.
+            </div>
 
-            <button class="explore-btn" onclick="closeModal()">Explore the map</button>
+            <h4>5. Limitations & Practical Solutions</h4>
+            <ul>
+                <li><b>Limitations:</b> 30m Landsat spatial resolution constraints, seasonal water-level fluctuations, and comparison across two discrete time periods.</li>
+                <li><b>Proposed Solutions:</b> Provides water authorities (NWSDB) with a low-cost, repeatable decision-support dashboard for early drought risk planning, water allocation strategies, and catchment conservation.</li>
+            </ul>
+
+            <h4>6. How to Use the Map</h4>
+            <p>Toggle the 2019 and 2026 layers, adjust the opacity slider to compare extents, use the quick-zoom buttons for each reservoir, and click directly on any reservoir polygon to view detailed statistics.</p>
+
+            <h4>7. Credits & AI Declaration</h4>
+            <p><b>Data & Tools:</b> Landsat Imagery (NASA/USGS), Basemaps (Esri), GIS Analysis (ArcGIS Pro), Web Mapping (Leaflet.js).</p>
+            <p><b>Originality & AI Disclosure:</b> All remote sensing workflows, NDWI derivations, and spatial area analyses were performed independently in ArcGIS Pro. AI (Gemini) was utilized strictly as a coding assistant for HTML/CSS/JS web interface structuring.</p>
+
+            <button class="explore-btn" onclick="closeModal()">Explore the Map</button>
         </div>
     </div>
 
