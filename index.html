@@ -119,7 +119,7 @@
             padding: 20px 25px;
             border-radius: 10px;
             width: 90%;
-            max-width: 600px;
+            max-width: 620px;
             max-height: 85vh;
             overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
@@ -134,7 +134,18 @@
         .modal-content h4 { color: #1e3c72; margin-top: 16px; margin-bottom: 6px; font-size: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
         .modal-content p { font-size: 12px; margin: 6px 0; color: #4a5568; }
         .modal-content ul, .modal-content ol { font-size: 12px; margin: 6px 0 12px 18px; padding: 0; color: #4a5568; }
-        .modal-content li { margin-bottom: 4px; }
+        .modal-content li { margin-bottom: 5px; }
+
+        .code-snippet {
+            background: #f1f5f9;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 11px;
+            color: #1e293b;
+            display: inline-block;
+            margin-top: 2px;
+        }
 
         /* Water Area Change Table */
         .data-table {
@@ -200,30 +211,38 @@
             <h3>About the Project</h3>
 
             <h4>1. The Problem</h4>
-            <p>Labugama and Kalatuwawa are reservoirs that feed water supply for the Colombo region. Changes in their surface water extent affect supply security, yet they are rarely tracked in a simple, visual, and repeatable way.</p>
+            <p>Labugama and Kalatuwawa are key reservoirs supplying drinking water to the Colombo region. Changes in their surface water extent directly affect water supply security, yet they are rarely tracked in a simple, visual, and repeatable way.</p>
 
-            <h4>2. Study Area & Data</h4>
+            <h4>2. Study Area & Satellite Data</h4>
             <p><b>Study Area:</b> Labugama & Kalatuwawa Reservoirs, Western Province, Sri Lanka</p>
-            <p><b>Data Source:</b> Cloud-free Landsat 8/9 OLI multi-spectral imagery (2019 & 2026), courtesy of NASA/USGS.</p>
-            <p><b>Coordinate Reference System (CRS):</b> WGS 1984 UTM Zone 44N (used for accurate metric area calculations).</p>
+            <p><b>Data Source:</b> Cloud-free Landsat 8/9 (Collection 2, Level-2) multi-spectral imagery downloaded via USGS EarthExplorer for <b>January 3, 2019 (2019-01-03)</b> and <b>September 12, 2026 (2026-09-12)</b>.</p>
+            <p><b>Coordinate System (CRS):</b> WGS 1984 UTM Zone 44N (used for accurate metric area calculations).</p>
 
-            <h4>3. Methodology</h4>
+            <h4>3. ArcGIS Pro Methodology</h4>
             <ol>
-                <li><b>Image Acquisition & Preprocessing:</b> Selected low-cloud-cover Landsat scenes for 2019 and 2026.</li>
-                <li><b>NDWI Spectral Calculation:</b> Computed Normalized Difference Water Index using Band 3 (Green) and Band 5 (NIR): <b>NDWI = (Green - NIR) / (Green + NIR)</b>.</li>
-                <li><b>Thresholding & Delineation:</b> Isolated open water surfaces from surrounding land and converted rasters into vector polygons.</li>
-                <li><b>Smoothing & Dissolve:</b> Applied PAEK (Polynomial Approximation with Exponential Kernel) smoothing and Pairwise Dissolve in ArcGIS Pro to refine reservoir boundaries.</li>
-                <li><b>Spatial Comparison & Web GIS:</b> Calculated exact surface areas (km²) and published layers via Leaflet.js.</li>
+                <li><b>Band Selection:</b> Imported Band 3 (Green) and Band 5 (Near-Infrared / NIR) into ArcGIS Pro for both 2019 and 2026.</li>
+                <li><b>NDWI Calculation:</b> Computed the Normalized Difference Water Index using the Raster Calculator (Spatial Analyst):<br>
+                    <span class="code-snippet">NDWI = Float(Band 3 [Green] - Band 5 [NIR]) / Float(Band 3 [Green] + Band 5 [NIR])</span>
+                </li>
+                <li><b>Water Extraction (Thresholding):</b> Extracted water pixels using the Conditional (<code>Con</code>) tool with a threshold greater than <code>-0.1</code>:<br>
+                    <span class="code-snippet">Con("NDWI_2019.tif" > -0.1, 1)</span> &nbsp; <span class="code-snippet">Con("NDWI_2026.tif" > -0.1, 1)</span>
+                </li>
+                <li><b>Polygon Conversion & Smoothing:</b> Converted water rasters to vector features using <b>Raster to Polygon</b> and refined shorelines using the <b>Smooth Polygon</b> (PAEK) tool.</li>
+                <li><b>Area Calculation & Web GIS:</b> Computed surface areas (km²) via <b>Calculate Geometry</b>, exported layers using <b>Features To JSON</b>, and built this Leaflet.js web map.</li>
             </ol>
 
-            <h4>4. Water Area Change & Results Interpretation</h4>
+            <h4>4. Water Area Change & Results</h4>
+            <p><b>Formulas Used:</b><br>
+            <span class="code-snippet">Net Change = 2026 Area - 2019 Area</span> &nbsp;
+            <span class="code-snippet">Percentage Change = ((2026 Area - 2019 Area) / 2019 Area) × 100</span></p>
+
             <table class="data-table">
                 <thead>
                     <tr>
                         <th>Reservoir</th>
-                        <th>2019 Area</th>
-                        <th>2026 Area</th>
-                        <th>Net Change</th>
+                        <th>2019 Area<br><small>(2019-01-03)</small></th>
+                        <th>2026 Area<br><small>(2026-09-12)</small></th>
+                        <th>Net Water Loss</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -241,27 +260,32 @@
                     </tr>
                 </tbody>
             </table>
-            <p style="font-size:10px; color:#666; margin-bottom: 8px;">*Note: Percentage reductions are calculated directly from unrounded raw vector geometry measurements in ArcGIS Pro.</p>
+            <p style="font-size:10px; color:#666; margin-bottom: 8px;">*Note: Percentage reductions are calculated directly from exact unrounded polygon areas in ArcGIS Pro.</p>
 
             <div class="highlight-box">
-                <b>Results Interpretation:</b> Both reservoirs experienced surface water shrinkage between 2019 and 2026. Kalatuwawa showed a significantly higher reduction (-26.17%) compared to Labugama (-6.60%), likely due to differences in basin morphometry and surrounding dense forest buffer protection at Labugama.
+                <b>Key Finding:</b> Both reservoirs experienced surface water reduction between 2019 and 2026. Kalatuwawa showed a much larger drop (-26.17%) compared to Labugama (-6.60%), highlighting the need for continuous reservoir monitoring and catchment protection.
             </div>
 
-            <h4>5. Limitations & Future Solutions</h4>
+            <h4>5. Proposed Solutions & Practical Impact</h4>
             <ul>
-                <li><b>Limitations:</b> 30m spatial resolution limits detection of narrow shoreline changes; seasonal rainfall variations between acquisition dates can influence water levels.</li>
-                <li><b>Solutions & Impact:</b> Provides water managers (NWSDB) a low-cost, repeatable decision-support workflow for early drought planning, catchment protection, and multi-year monitoring.</li>
+                <li><b>Easy & Low-Cost Monitoring:</b> Gives water authorities (like NWSDB) a free, repeatable way to track reservoir changes using open-access Landsat imagery instead of relying solely on costly field surveys.</li>
+                <li><b>Better Dry-Season Planning:</b> Helps water managers plan ahead for dry weather, manage distribution carefully, and reduce drinking water shortages in the Colombo area.</li>
+                <li><b>Catchment Protection:</b> Helps identify exposed shorelines to prevent illegal land encroachment and prioritize tree-planting around reservoir catchments.</li>
             </ul>
 
-            <h4>6. Conclusion</h4>
-            <p>Integrating Landsat NDWI remote sensing with interactive Web GIS effectively reveals multi-temporal reservoir depletion patterns, offering an accessible tool for sustainable urban water resource management.</p>
+            <h4>6. Limitations</h4>
+            <ul>
+                <li><b>Seasonal Weather Differences:</b> Images were captured in different months (January 2019 vs. September 2026), so seasonal rainfall variations can influence water levels.</li>
+                <li><b>30-Meter Resolution:</b> Landsat's 30m pixel size limits the detection of very small or narrow shoreline shifts.</li>
+                <li><b>Two-Date Comparison & Cloud Cover:</b> Comparing only two dates does not show year-by-year fluctuations, and optical imagery is restricted by tropical cloud cover.</li>
+            </ul>
 
             <h4>How to Use the Map</h4>
             <p>Toggle the 2019 and 2026 layers, adjust the opacity slider to compare boundaries, use the quick-zoom buttons, and click any water polygon for detailed metrics.</p>
 
             <h4>Credits & AI Usage Disclosure</h4>
-            <p><b>Data & Software:</b> Landsat imagery courtesy of NASA/USGS. Basemaps © Esri. Spatial analysis performed independently in ArcGIS Pro; web interface built with Leaflet.js (AI assisted with frontend web code formatting).</p>
-            <p><b>Developer:</b> Geo-Spatial Technology Undergraduate Project (SPATIALX 2026)</p>
+            <p><b>Data & Software:</b> Landsat imagery courtesy of NASA/USGS. Basemaps © Esri. All satellite downloading, NDWI calculations, thresholding, polygon smoothing, and area measurements were performed independently in <b>ArcGIS Pro</b> without AI assistance. AI was used solely to assist with coding and styling the frontend Leaflet.js web interface.</p>
+            <p><b>Developer:</b> Geo-Spatial Technology Undergraduate Project | University of Sri Jayewardenepura (SPATIALX 2026)</p>
 
             <button class="explore-btn" onclick="closeModal()">Explore the map</button>
         </div>
