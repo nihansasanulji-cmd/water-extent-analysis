@@ -121,7 +121,7 @@ topRightControls.onAdd = function () {
 };
 topRightControls.addTo(map);
 
-// 6. Layer Control (Basemaps + Overlays) placed right below the Legend on Top-Right
+// 6. Layer Control (Auto-collapses on mobile screens <= 650px, stays expanded on laptop/desktop)
 var baseMaps = {
     "🛰️ Esri Satellite Imagery": satellite,
     "🗺️ OpenStreetMap Streets": streets,
@@ -134,7 +134,8 @@ var overlayMaps = {
     "🔴 Water Loss (2019–2026)": layerLoss
 };
 
-L.control.layers(baseMaps, overlayMaps, { position: 'topright', collapsed: false }).addTo(map);
+var isMobile = window.innerWidth <= 650;
+L.control.layers(baseMaps, overlayMaps, { position: 'topright', collapsed: isMobile }).addTo(map);
 
 // 7. Quick Zoom Buttons & Opacity Slider (Top-Left)
 var customControls = L.control({ position: 'topleft' });
