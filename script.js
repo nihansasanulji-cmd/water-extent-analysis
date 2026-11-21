@@ -89,11 +89,11 @@ var layerLoss = L.geoJSON(dataLoss, {
         var props = feature.properties || {};
         var resName = props.Reservoir || "Reservoir";
         var lossVal = props.SUM_km2 ? Number(props.SUM_km2).toFixed(4) : (resName === "Kalatuwawa" ? "0.3522" : "0.0418");
-        var pctText = (resName === "Kalatuwawa") ? "-26.17%" : "-6.60%";
+        var pctText = (resName === "Kalatuwawa") ? "-26.17% net change" : "-6.60% net change";
 
         layer.bindTooltip(resName + " Water Loss (-" + Number(lossVal).toFixed(2) + " km²)", { sticky: true });
         layer.bindPopup(
-            "<h3>" + resName + " — Total Water Loss</h3>" +
+            "<h3>" + resName + " — Dissolved Water Loss</h3>" +
             "<p><b>Exposed Shoreline Area:</b> <span class='badge-dec'>-" + lossVal + " km² (" + pctText + ")</span></p>" +
             "<p><b>GIS Method:</b> ArcGIS Pro Erase (2019 − 2026), Sliver Removal (&lt; 0.0009 km²), &amp; Dissolve.</p>" +
             "<p><i>Priority zone for shoreline protection and reforestation.</i></p>"
