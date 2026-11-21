@@ -101,7 +101,27 @@ var layerLoss = L.geoJSON(dataLoss, {
     }
 }).addTo(map);
 
-// 5. Layer Control (Basemaps + Overlays)
+// 5. Top-Right: North Arrow (1st) & Map Legend (2nd)
+var topRightControls = L.control({ position: 'topright' });
+topRightControls.onAdd = function () {
+    var div = L.DomUtil.create('div');
+    div.innerHTML = `
+        <div class="north-arrow">
+            <b style="font-size:14px; color:#1e3c72;">▲<br>N</b>
+        </div>
+        <div class="legend" style="margin-bottom: 6px;">
+            <h4>Map Legend</h4>
+            <div class="legend-item"><i style="background: #f39c12; border: 1px solid #d35400;"></i> 2019 Water Extent</div>
+            <div class="legend-item"><i style="background: #2980b9; border: 1px solid #1b4f72;"></i> 2026 Water Extent</div>
+            <div class="legend-item"><i style="background: #e74c3c; border: 1px solid #922b21;"></i> Water Loss (2019–2026)</div>
+        </div>
+    `;
+    L.DomEvent.disableClickPropagation(div);
+    return div;
+};
+topRightControls.addTo(map);
+
+// 6. Layer Control (Basemaps + Overlays) placed right below the Legend on Top-Right
 var baseMaps = {
     "🛰️ Esri Satellite Imagery": satellite,
     "🗺️ OpenStreetMap Streets": streets,
@@ -114,9 +134,9 @@ var overlayMaps = {
     "🔴 Water Loss (2019–2026)": layerLoss
 };
 
-L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
+L.control.layers(baseMaps, overlayMaps, { position: 'topright', collapsed: false }).addTo(map);
 
-// 6. Quick Zoom Buttons & Opacity Slider (Top-Left)
+// 7. Quick Zoom Buttons & Opacity Slider (Top-Left)
 var customControls = L.control({ position: 'topleft' });
 customControls.onAdd = function () {
     var div = L.DomUtil.create('div');
@@ -153,25 +173,6 @@ document.addEventListener('input', function (e) {
         layer2026.setStyle({ fillOpacity: val });
     }
 });
-
-// 7. North Arrow & Legend (Bottom-Right)
-var legendControl = L.control({ position: 'bottomright' });
-legendControl.onAdd = function () {
-    var div = L.DomUtil.create('div');
-    div.innerHTML = `
-        <div class="north-arrow">
-            <b style="font-size:14px; color:#1e3c72;">▲<br>N</b>
-        </div>
-        <div class="legend">
-            <h4>Map Legend</h4>
-            <div class="legend-item"><i style="background: #f39c12; border: 1px solid #d35400;"></i> 2019 Water Extent</div>
-            <div class="legend-item"><i style="background: #2980b9; border: 1px solid #1b4f72;"></i> 2026 Water Extent</div>
-            <div class="legend-item"><i style="background: #e74c3c; border: 1px solid #922b21;"></i> Water Loss (2019–2026)</div>
-        </div>
-    `;
-    return div;
-};
-legendControl.addTo(map);
 
 // 8. Metric & Imperial Scale Bar (Bottom-Left)
 L.control.scale({ position: 'bottomleft', imperial: true, metric: true }).addTo(map);
