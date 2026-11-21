@@ -251,11 +251,27 @@
         }
         .explore-btn:hover { background-color: #2a5298; }
 
-        @media (max-width: 600px) {
+        /* Mobile Responsive Adjustments (Only applies to screens <= 650px) */
+        @media (max-width: 650px) {
             #header { padding: 8px 12px; }
-            #header h2 { font-size: 14px; }
-            #header p { font-size: 10px; }
+            #header h2 { font-size: 13px; }
+            #header p { font-size: 9.5px; }
             .info-btn { padding: 5px 8px; font-size: 11px; }
+
+            /* Compact Left Controls on Mobile */
+            .zoom-bar { padding: 4px; }
+            .zoom-btn { padding: 4px 6px; font-size: 10px; margin: 1px; }
+            .opacity-box { padding: 5px 8px; font-size: 10px; margin-top: 6px; }
+            .opacity-box input { width: 85px; }
+
+            /* Compact Right Legend & North Arrow on Mobile */
+            .north-arrow { padding: 4px 8px; margin-bottom: 4px; }
+            .legend { padding: 6px 8px; font-size: 10px; line-height: 15px; }
+            .legend h4 { font-size: 11px; margin-bottom: 4px; }
+            .legend i { width: 12px; height: 12px; margin-right: 5px; }
+
+            /* Keep Scale Bar clearly above Attribution on Mobile */
+            .leaflet-control-scale { margin-bottom: 24px !important; }
         }
     </style>
 </head>
